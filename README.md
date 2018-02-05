@@ -24,3 +24,8 @@ Part 1.
     #style nav bar & form
     Add nav bar to all pages
     Style the new campgrounds form
+    
+    #Add Mongoose
+    Install and configure
+    setup campground model
+    use model inside our routes
