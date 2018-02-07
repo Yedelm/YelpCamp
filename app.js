@@ -2,33 +2,17 @@ var express      = require("express"),
     faker        = require("faker"),
     bodyParser   = require("body-parser"),
     app          = express(),
-    mongoose     = require("mongoose");
+    mongoose     = require("mongoose"),
+    Campground   = require("./models/campground"),
+    Comment      = require("./models/comment"),
+    seedDB       = require("./seeds");
+    // Comment      = require("./models/comment"),
 
+seedDB();
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(express.static(__dirname + "/public"));
 mongoose.connect("mongodb://localhost/yelp_camp");
-
-//SCHEMA SETUP
-var campgroundSchema = new mongoose.Schema({
-    name : String,
-    image : String,
-    description: String
-});
-var Campground = mongoose.model("Campground", campgroundSchema);
-
-// Campground.create({
-//     name: faker.name.findName(),
-//     image:"https://farm2.staticflickr.com/1203/1132895352_afd086a60b.jpg",
-//     description: "This is a huge place, but no bathrooms.  no water. "
-// }, function(err, campground){
-//     if(err){
-//         console.log(err);
-//     }   else{
-//         console.log("Newly created campground: ");
-//         console.log(campground);
-//     }
-// });
-
 
 app.get("/",function(req, res){
    res.render("landing"); 
@@ -41,7 +25,7 @@ app.get("/campgrounds", function(req, res){
        if(err){
            console.log(err);
        } else{
-            res.render("index", {campgrounds: allCampgrounds});
+            res.render("campgrounds/index", {campgrounds: allCampgrounds});
        }
     });
    //
@@ -64,22 +48,59 @@ app.post("/campgrounds",function(req, res){
    })
 });
 
-//NEW -- show the form for new campgroumd
+//NEW -- show the form for new campground
 app.get("/campgrounds/new", function(req, res) {
-   res.render("new"); 
+   res.render("campgrounds/new"); 
 });
 
 //SHOW
 app.get("/campgrounds/:id", function(req, res){
     //find the campground with provided ID
-    Campground.findById(req.params.id,function(err, foundCampground){
+    Campground.findById(req.params.id).populate("comments").exec(function(err, foundCampground){
        if(err){
            console.log(err);
        } else{
             //render the show template campground page
-           res.render("show", {campground : foundCampground});
+           res.render("campgrounds/show", {campground : foundCampground});
        }
     });
+});
+
+//===========================
+//  COMMENTS ROUTES
+//===========================
+app.get("/campgrounds/:id/comments/new", function(req, res) {
+    //find campground by id
+    Campground.findById(req.params.id, function(err, campground){
+        if(err){
+            console.log(err);
+        } else{
+                res.render("comments/new", {campground : campground});
+        }
+    })
+});
+
+app.post("/campgrounds/:id/comments", function(req, res){
+   //look up campground by id
+   Campground.findById(req.params.id, function(err, campground){
+       if(err){
+           console.log(err);
+           res.redirect("/campgrounds");
+       } else{
+           Comment.create(req.body.comment, function(err, comment){
+               if(err){
+                   console.log(err);
+               } else {
+                   campground.comments.push(comment);
+                   campground.save();
+                   res.redirect("/campgrounds/" + campground._id);
+               }
+           });
+       }
+   })
+   //create new comment
+   //connect new comment to campground
+   //redirect
 });
 
 app.listen(process.env.PORT, process.env.IP,function(){
