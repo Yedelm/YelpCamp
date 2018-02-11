@@ -32,7 +32,7 @@ router.post("/",isLoggedIn, function(req, res){
                    comment.author.username = req.user.username;
                    //save comment
                    comment.save();
-                   campground.comments.push(comment);
+                   campground.comments.push(comment._id);
                    campground.save();
                    res.redirect("/campgrounds/" + campground._id);
                }
@@ -44,12 +44,67 @@ router.post("/",isLoggedIn, function(req, res){
    //redirect
 });
 
+//comments edit route
+router.get("/:comment_id/edit",checkCommentOwnership, function(req, res){
+    Comment.findById(req.params.comment_id, function(err, foundComment) {
+        if(err){
+            res.redirect("back");
+        } else{
+            //URL id is exist for campground
+            res.render("comments/edit", {campground_id: req.params.id, comment: foundComment});
+        }
+    });
+});
+
+//comments update
+router.put("/:comment_id",checkCommentOwnership, function(req, res){
+    Comment.findByIdAndUpdate(req.params.comment_id, req.body.comment, function(err, updatedComment){
+        if(err){
+            //console.log(err);
+            res.redirect("back");
+        } else{
+            res.redirect("/campgrounds/" + req.params.id);
+        }
+    });
+});
+
+router.delete("/:comment_id",checkCommentOwnership, function(req, res){
+    Comment.findByIdAndRemove(req.params.comment_id, function(err){
+        if(err){
+            res.redirect("back");
+        } else {
+            res.redirect("/campgrounds/" + req.params.id);
+        }
+    });
+});
+
 //middleware
 function isLoggedIn(req, res, next){
     if(req.isAuthenticated()){
         return next();
     }
     res.redirect("/login");
+}
+
+function checkCommentOwnership(req, res, next){
+    //is user loged in?
+    if(req.isAuthenticated()){
+        Comment.findById(req.params.comment_id, function(err, foundComment){
+            if(err){
+                res.redirect("back");
+            } else {
+                //dose use own the post,  use mongoose's equals() instead of
+                //if(foundCampground.author.id === req.user._id)  req.use._id is string，found... is object
+                if(foundComment.author.id.equals(req.user._id)){
+                    next();
+                } else {
+                    res.redirect("back");   
+                }
+            }
+        });
+    } else {
+        res.redirect("back");   //to previous page
+    }
 }
 
 module.exports = router;

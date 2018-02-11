@@ -53,12 +53,64 @@ router.get("/:id", function(req, res){
     });
 });
 
+//Edit campground route
+router.get("/:id/edit", checkCampgroundOwnership, function(req, res) {
+    Campground.findById(req.params.id, function(err, foundCampground){
+        res.render("campgrounds/edit", {campground: foundCampground});
+    });
+});
+
+//Update campground route
+router.put("/:id", checkCampgroundOwnership, function(req, res){
+   //find and update the correct campground, mongo's method
+   Campground.findByIdAndUpdate(req.params.id, req.body.campground, function(err, updatedCampground){
+       if(err){
+           res.redirect("/campgrounds");
+       } else{
+           res.redirect(("/campgrounds/" + req.params.id));
+       }
+   });
+});
+
+//Delete campgrounds
+router.delete("/:id",checkCampgroundOwnership, function(req, res){
+    Campground.findByIdAndRemove(req.params.id, function(err){
+        if(err){
+            res.redirect("/campgrounds");
+        } else{
+            res.redirect("/campgrounds");
+        }
+    });
+});
+
 //middleware
 function isLoggedIn(req, res, next){
     if(req.isAuthenticated()){
         return next();
     }
     res.redirect("/login");
+}
+
+function checkCampgroundOwnership(req, res, next){
+    //is user loged in?
+    if(req.isAuthenticated()){
+        Campground.findById(req.params.id, function(err, foundCampground){
+            if(err){
+                console.log(err);
+                res.redirect("back");
+            } else {
+                //dose use own the post,  use mongoose's equals() instead of
+                //if(foundCampground.author.id === req.user._id)  req.use._id is string，found... is object
+                if(foundCampground.author.id.equals(req.user._id)){
+                    next();
+                } else {
+                    res.redirect("back");   
+                }
+            }
+        });
+    } else {
+        res.redirect("back");   //to previous page
+    }
 }
 
 module.exports = router;
