@@ -32,7 +32,10 @@ app.use(require("express-session")({
     name: "Yedelm",
     secret: "My secret",
     resave: false,
-    saveUninitialized: false
+    saveUninitialized: false,
+    cookie: {
+        secure: true
+    }
 }));
 app.use(passport.initialize());
 app.use(passport.session());
