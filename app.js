@@ -29,7 +29,7 @@ mongoose.connect("mongodb://Yedelm:LHW13452024363@ds235418.mlab.com:35418/yelpca
 
 //PASSPORT CONFIGURATION
 app.use(require("express-session")({
-    name: "Yedelm",
+    //name: "Yedelm",
     secret: "My secret",
     resave: false,
     saveUninitialized: false,
