@@ -29,7 +29,8 @@ mongoose.connect("mongodb://Yedelm:LHW13452024363@ds235418.mlab.com:35418/yelpca
 
 //PASSPORT CONFIGURATION
 app.use(require("express-session")({
-    secret: "Once again Rusty wins cutest dog!",
+    name: "Yedelm",
+    secret: "My secret",
     resave: false,
     saveUninitialized: false
 }));
