@@ -23,10 +23,11 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static(__dirname + "/public"));
 app.use(methodOverride("_method"));
 app.use(flash());
+
+var url = process.env.DATABASEURL || "mongodb://localhost/yelp_camp";
+mongoose.connect(url);
 //mongoose.connect("mongodb://localhost/yelp_camp");   process.env.DATABASEURL
-//mongoose.connect("mongodb://Yedelm:LHW13452024363@ds235418.mlab.com:35418/yelpcamp");
-mongoose.connect(process.env.DATABASEURL);
-//mongodb://Yedelm:LHW13452024363@ds235418.mlab.com:35418/yelpcamp
+//mongoose.connect("mongodb://<dbuser>:<dbpassword>@ds235418.mlab.com:35418/yelpcamp");
 
 //PASSPORT CONFIGURATION
 app.use(require("express-session")({

@@ -39,7 +39,7 @@ router.post("/login", passport.authenticate("local",
     {
         successRedirect: "/campgrounds",
         failureRedirect: "/login",
-        successFlash: "Successfully loggingIn as ",
+        successFlash: "Successfully logged In",
         failureFlash: true
     }), function(req, res) {
 });
