@@ -29,6 +29,7 @@ mongoose.connect(url);
 //mongoose.connect("mongodb://localhost/yelp_camp");   process.env.DATABASEURL
 //mongoose.connect("mongodb://<dbuser>:<dbpassword>@ds235418.mlab.com:35418/yelpcamp");
 
+app.locals.moment = require("moment");
 //PASSPORT CONFIGURATION
 app.use(require("express-session")({
     //name: "Yedelm",

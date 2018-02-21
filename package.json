@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start" : "node app.js"
+    "start": "node app.js"
   },
   "author": "Hanwei Liu",
   "license": "ISC",
@@ -17,6 +17,7 @@
     "express-session": "^1.15.6",
     "faker": "^4.1.0",
     "method-override": "^2.3.10",
+    "moment": "^2.20.1",
     "mongoose": "^5.0.0-rc2",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
