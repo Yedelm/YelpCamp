@@ -5,14 +5,30 @@ var middleware = require("../middleware/index.js");   //index.js is special, wil
 
 //INDEX -- show all campgrounds
 router.get("/", function(req, res){
-    //Get all campgrounds from DB
-    Campground.find({}, function(err, allCampgrounds){
-       if(err){
-           console.log(err);
-       } else{
-            res.render("campgrounds/index", {campgrounds: allCampgrounds, page:"campgrounds"});
-       }
-    });
+   var noMatch;
+    if(req.query.search){
+        const regex = new RegExp(escapeRegex(req.query.search), "gi");
+        //Get search reasults campgrounds from DB
+        Campground.find({name: regex}, function(err, allCampgrounds){
+           if(err){
+               console.log(err);
+           } else{
+               if(allCampgrounds.length < 1){
+                   noMatch = "No campgrounds match the search, please try again!";
+               }
+                res.render("campgrounds/index", {campgrounds: allCampgrounds, noMatch: noMatch, page:"campgrounds"});
+           }
+        });
+    } else{
+        //Get all campgrounds from DB
+        Campground.find({}, function(err, allCampgrounds){
+           if(err){
+               console.log(err);
+           } else{
+                res.render("campgrounds/index", {campgrounds: allCampgrounds, noMatch: noMatch, page:"campgrounds"});
+           }
+        });
+    }
 });
 
 //Create -- 
@@ -85,5 +101,9 @@ router.delete("/:id", middleware.checkCampgroundOwnership, function(req, res){
         }
     });
 });
+
+function escapeRegex(text){
+    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+}
 
 module.exports = router;
