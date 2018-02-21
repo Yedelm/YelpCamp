@@ -25,6 +25,14 @@
                     <li class="<%= typeof page !== 'undefined' && page === 'campgrounds' ? 'active' : '' %>"><a href="/campgrounds">Home</a></li>
                   </ul>
                   <ul class="nav navbar-nav navbar-right">
+                       <li>
+                           <form action="/campgrounds" method="GET" class="navbar-form navbar-left" role="search">
+                              <div class="form-group">
+                                <input type="text" class="form-control" name="search" placeholder="Campground search..." placeholder="Search">
+                              </div>
+                              <button type="submit" value="Search" class="btn btn-default">Submit</button>
+                            </form>
+                       </li>
                       <% if(!currentUser){ %>
                           <li class="<%= typeof page !== 'undefined' && page === 'login' ? 'active' : '' %>"><a href="/login">Login</a></li>
                           <li class="<%= typeof page !== 'undefined' && page === 'register' ? 'active' : '' %>"><a href="/register">Sign Up</a></li>

@@ -14,6 +14,10 @@
     display: inline;
 }
 
+#search-form {
+    display: inline;
+}
+
 #trade-mark {
     position: absolute;    
     bottom: 0;
