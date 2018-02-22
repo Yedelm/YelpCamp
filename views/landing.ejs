@@ -33,3 +33,11 @@
       <li></li>
       <li></li>
     </ul>
+    
+    <style>
+    <% campgrounds.forEach(function (campground, index) { %>
+    .slideshow li:nth-child(<%- index+1 %>) {
+        background-image: url(<%= campground.image %>);
+    }
+    <% }); %>
+    </style>

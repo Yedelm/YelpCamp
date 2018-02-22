@@ -1,11 +1,20 @@
 var express = require("express");
 var router = express.Router();
 var User = require("../models/user");
+var Campground = require("../models/campground");
 var passport = require("passport");
 
 //root route
 router.get("/",function(req, res){
-   res.render("landing"); 
+   //res.render("landing"); 
+    Campground.find({}, function(err, campgrounds) {
+        if(err) {
+            console.log(err);
+            req.flash("error", err.message);
+            return res.render("/");
+        }
+        res.render("landing", {campgrounds: campgrounds});
+    });
 });
 
 //show register form
